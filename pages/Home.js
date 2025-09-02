@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, ScrollView } from "react-native";
+import { View, StyleSheet, Text, Image, ScrollView, Pressable } from "react-native";
 import { Button, Card } from "react-native-paper";
 
 export default function Home({ navigation }) {
@@ -22,30 +22,57 @@ export default function Home({ navigation }) {
               source={require("../assets/camisas/real_23.jpeg")}
               style={styles.cardImg}
             />
-            <Card.Content>
-              <Text style={styles.cardTitle}>Real Madrid 23/24</Text>
-              <Text style={styles.cardDesc}>Nova coleção, tecido dry-fit</Text>
-            </Card.Content>
+            <Pressable
+              onPress={() => navigation.navigate("Produtos", { destaque: "Real Madrid 23/24" })}
+              android_ripple={{ color: "#001F54", borderless: false }}
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.8 : 1 },
+                { borderRadius: 16 },
+              ]}
+            >
+              <Card.Content>
+                <Text style={styles.cardTitle}>Real Madrid 23/24</Text>
+                <Text style={styles.cardDesc}>Nova coleção, tecido dry-fit</Text>
+              </Card.Content>
+            </Pressable>
           </Card>
           <Card style={styles.card}>
             <Image
               source={require("../assets/camisas/psg_23.jpg")}
               style={styles.cardImg}
             />
-            <Card.Content>
-              <Text style={styles.cardTitle}>PSG 23/24</Text>
-              <Text style={styles.cardDesc}>Edição limitada, gola V</Text>
-            </Card.Content>
+            <Pressable
+              onPress={() => navigation.navigate("Produtos", { destaque: "PSG 23/24" })}
+              android_ripple={{ color: "#001F54", borderless: false }}
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.8 : 1 },
+                { borderRadius: 16 },
+              ]}
+            >
+              <Card.Content>
+                <Text style={styles.cardTitle}>PSG 23/24</Text>
+                <Text style={styles.cardDesc}>Edição limitada, Ugarte, gola V</Text>
+              </Card.Content>
+            </Pressable>
           </Card>
           <Card style={styles.card}>
             <Image
               source={require("../assets/camisas/fla_23.jpg")}
               style={styles.cardImg}
             />
-            <Card.Content>
-              <Text style={styles.cardTitle}>Flamengo 23/24</Text>
-              <Text style={styles.cardDesc}>Versão torcedor, manga longa</Text>
-            </Card.Content>
+            <Pressable
+              onPress={() => navigation.navigate("Produtos", { destaque: "Flamengo 23/24" })}
+              android_ripple={{ color: "#001F54", borderless: false }}
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.8 : 1 },
+                { borderRadius: 16 },
+              ]}
+            >
+              <Card.Content>
+                <Text style={styles.cardTitle}>Flamengo 23/24</Text>
+                <Text style={styles.cardDesc}>Versão torcedor, manga longa</Text>
+              </Card.Content>
+            </Pressable>
           </Card>
         </ScrollView>
       </View>

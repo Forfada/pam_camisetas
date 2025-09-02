@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "pam_camisetas",
+    
+    "name": "FERRA Camisas",
     "slug": "pam_camisetas",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/splash.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -16,12 +17,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#000000"
       }
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/splash.png"
     }
   }
 }

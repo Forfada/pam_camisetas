@@ -19,7 +19,55 @@ export default function Produtos({ navigation }) {
       nome: "Camiseta PSG 23/24",
       imagem: "..assets/camisas/psg.jpg",
     },
+    {
+      id: "4",
+      nome: "Camiseta Corinthians 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "5",
+      nome: "Camiseta PSV 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "6",
+      nome: "Camiseta Ajax 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "7",
+      nome: "Camiseta Milan 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "8",
+      nome: "Camiseta Mirassol 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "9",
+      nome: "Camiseta São Paulo 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "10",
+      nome: "Camiseta Santos 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
+    {
+      id: "11",
+      nome: "Camiseta Al Hilal 23/24",
+      imagem: "..assets/camisas/psg.jpg",
+    },
   ]);
+
+  const itensPorPagina = 4;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(produtos.length / itensPorPagina);
+  const produtosPaginados = produtos.slice(
+    (page - 1) * itensPorPagina,
+    page * itensPorPagina
+  );
 
   const excluirProduto = (id) => {
     setProdutos(produtos.filter((p) => p.id !== id));
@@ -29,7 +77,7 @@ export default function Produtos({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Camisetas de Times</Text>
       <FlatList
-        data={produtos}
+        data={produtosPaginados}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Card style={styles.card}>
@@ -62,8 +110,45 @@ export default function Produtos({ navigation }) {
             />
           </Card>
         )}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20}}
+        ListFooterComponent={
+          totalPages > 1 && (
+            <View style={[styles.paginationContainer, { marginHorizontal: 0, paddingHorizontal: 10 }]}>
+              <Button
+                mode="contained"
+                onPress={() => setPage(page - 1)}
+                disabled={page === 1}
+                style={[
+                  styles.paginationButton,
+                  page === 1 && styles.paginationButtonDisabled,
+                ]}
+                labelStyle={styles.paginationLabel}
+                icon="chevron-left"
+              >
+                Anterior
+              </Button>
+              <Text style={styles.paginationText}>
+                {page} de {totalPages}
+              </Text>
+              <Button
+                mode="contained"
+                onPress={() => setPage(page + 1)}
+                disabled={page === totalPages}
+                style={[
+                  styles.paginationButton,
+                  page === totalPages && styles.paginationButtonDisabled,
+                ]}
+                labelStyle={styles.paginationLabel}
+                icon="chevron-right"
+                contentStyle={{ flexDirection: "row-reverse" }}
+              >
+                Próxima
+              </Button>
+            </View>
+          )
+        }
       />
+
       <Button
         mode="contained"
         onPress={() => navigation.navigate("AdicionarProduto", { produtos, setProdutos })}
@@ -109,5 +194,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
     elevation: 3,
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    gap: 10,
+    width: "100%",
+  },
+  paginationButton: {
+    backgroundColor: "#001F54",
+    borderRadius: 8,
+    minWidth: 90, // diminui para caber melhor
+    marginHorizontal: 0,
+    elevation: 2,
+  },
+  paginationButtonDisabled: {
+    backgroundColor: "#B0B8C1",
+  },
+  paginationLabel: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+  paginationText: {
+    color: "#001F54",
+    fontWeight: "bold",
+    fontSize: 15,
+    marginHorizontal: 10,
   },
 });

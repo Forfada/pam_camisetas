@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, Image, Alert } from "react-native";
-import { Button, Card, IconButton, Text } from "react-native-paper";
+import { Button, Card, Text } from "react-native-paper";
 import { listarProdutos, excluirProduto, seedProdutosPadrao } from "../Portland/DB";
+import { useCart } from "../CartContext";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Produtos({ navigation }) {
   const [produtos, setProdutos] = useState([]);
@@ -9,6 +11,8 @@ export default function Produtos({ navigation }) {
 
   const itensPorPagina = 4;
   const [page, setPage] = useState(1);
+
+  const { cart, addToCart } = useCart();
 
   const totalPages = Math.ceil(produtos.length / itensPorPagina);
   const produtosPaginados = produtos.slice(
@@ -35,24 +39,6 @@ export default function Produtos({ navigation }) {
     setLoading(false);
   }
 
-  const handleExcluirProduto = (id) => {
-    Alert.alert(
-      "Excluir",
-      "Tem certeza que deseja excluir esta camiseta?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            await excluirProduto(id);
-            carregarProdutos();
-          },
-        },
-      ]
-    );
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Camisetas de Times</Text>
@@ -68,27 +54,24 @@ export default function Produtos({ navigation }) {
             <Card.Title
               title={item.nome}
               titleStyle={{ color: "#fff", fontWeight: "bold" }}
-              right={() => (
-                <View style={{ flexDirection: "row" }}>
-                  <IconButton
-                    icon="pencil"
-                    iconColor="#fff"
-                    containerColor="#001F54"
-                    onPress={() =>
-                      navigation.navigate("AdicionarProduto", {
-                        editar: item,
-                      })
-                    }
-                  />
-                  <IconButton
-                    icon="delete"
-                    iconColor="#001F54"
-                    containerColor="#fff"
-                    onPress={() => handleExcluirProduto(item.id)}
-                  />
-                </View>
-              )}
             />
+            <Card.Content>
+              <Text style={{ color: "#fff", marginBottom: 8 }}>
+                {item.descricao}
+              </Text>
+              <Button
+                mode="contained"
+                icon="cart-plus"
+                style={styles.addCartBtn}
+                labelStyle={{ color: "#fff" }}
+                onPress={() => {
+                  addToCart(item);
+                  Alert.alert("Adicionado ao carrinho!");
+                }}
+              >
+                Adicionar ao Carrinho
+              </Button>
+            </Card.Content>
           </Card>
         )}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -134,15 +117,29 @@ export default function Produtos({ navigation }) {
 
       <Button
         mode="contained"
-        onPress={() =>
-          navigation.navigate("AdicionarProduto", {})
-        }
+        onPress={() => navigation.navigate("AdicionarProduto", {})}
         style={styles.button}
         labelStyle={{ color: "#fff", fontWeight: "bold" }}
         icon="plus"
       >
         Adicionar Camiseta
       </Button>
+
+      {/* Botão do carrinho flutuante */}
+      <View style={styles.cartButtonContainer}>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate("Carrinho")}
+          style={styles.cartButton}
+          contentStyle={{ flexDirection: "row" }}
+          labelStyle={{ color: "#fff" }}
+          icon={() => (
+            <Icon name="cart" size={28} color="#fff" />
+          )}
+        >
+          {cart.length > 0 ? cart.length : null}
+        </Button>
+      </View>
     </View>
   );
 }
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
   },
   imagem: {
     width: "100%",
-    height: 220, // Mais quadrado
+    height: 220,
     resizeMode: "cover",
     backgroundColor: "#001F54",
   },
@@ -179,6 +176,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
     elevation: 3,
+  },
+  addCartBtn: {
+    backgroundColor: "#001F54",
+    borderRadius: 8,
+    marginTop: 4,
+    marginBottom: 2,
+    alignSelf: "flex-start",
   },
   paginationContainer: {
     flexDirection: "row",
@@ -208,5 +212,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
     marginHorizontal: 10,
+  },
+  cartButtonContainer: {
+    position: "absolute",
+    right: 20,
+    bottom: 90,
+    zIndex: 10,
+  },
+  cartButton: {
+    backgroundColor: "#001F54",
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    padding: 0,
   },
 });

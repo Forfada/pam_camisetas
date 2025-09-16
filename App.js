@@ -10,6 +10,8 @@ import Produtos from "./pages/Produtos";
 import AdicionarProduto from "./pages/AdicionarProduto";
 import Contato from "./pages/Contato";
 import ViewProduto from "./pages/ViewProduto";
+import Carrinho from "./pages/Carrinho";
+import { CartProvider } from "./CartContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -42,47 +44,58 @@ function Tabs() {
 export default function App() {
   return (
     <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Tabs"
-            component={Tabs}
-            options={{
-              header: () => (
-                <Appbar.Header style={{ backgroundColor: "#001F54" }}>
-                  <Appbar.Content
-                    title="FERRA Camisas"
-                    titleStyle={{
-                      color: "#fff",
-                      fontWeight: "bold",
-                      fontSize: 22,
-                      letterSpacing: 1,
-                    }}
-                  />
-                </Appbar.Header>
-              ),
-            }}
-          />
-          <Stack.Screen
-            name="AdicionarProduto"
-            component={AdicionarProduto}
-            options={{
-              headerStyle: { backgroundColor: "#001F54" },
-              headerTintColor: "#fff",
-              title: "Adicionar Camiseta",
-            }}
-          />
-          <Stack.Screen
-            name="ViewProduto"
-            component={ViewProduto}
-            options={{
-              headerStyle: { backgroundColor: "#001F54" },
-              headerTintColor: "#fff",
-              title: "Detalhes da Camiseta",
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <CartProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Tabs"
+              component={Tabs}
+              options={{
+                header: () => (
+                  <Appbar.Header style={{ backgroundColor: "#001F54" }}>
+                    <Appbar.Content
+                      title="FERRA Camisas"
+                      titleStyle={{
+                        color: "#fff",
+                        fontWeight: "bold",
+                        fontSize: 22,
+                        letterSpacing: 1,
+                      }}
+                    />
+                  </Appbar.Header>
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="AdicionarProduto"
+              component={AdicionarProduto}
+              options={{
+                headerStyle: { backgroundColor: "#001F54" },
+                headerTintColor: "#fff",
+                title: "Adicionar Camiseta",
+              }}
+            />
+            <Stack.Screen
+              name="ViewProduto"
+              component={ViewProduto}
+              options={{
+                headerStyle: { backgroundColor: "#001F54" },
+                headerTintColor: "#fff",
+                title: "Detalhes da Camiseta",
+              }}
+            />
+            <Stack.Screen
+              name="Carrinho"
+              component={Carrinho}
+              options={{
+                headerStyle: { backgroundColor: "#001F54" },
+                headerTintColor: "#fff",
+                title: "Carrinho",
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </CartProvider>
     </PaperProvider>
   );
 }

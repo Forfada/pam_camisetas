@@ -6,7 +6,6 @@ export default function Contato() {
   const [nome, setNome] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [visivel, setVisivel] = useState(false);
-
   
   const handleEnviar = () => {
     setVisivel(true);
@@ -137,3 +136,4 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+

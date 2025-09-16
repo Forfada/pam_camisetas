@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text, Alert } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import { inserirProduto, atualizarProduto } from "../Portland/DB";
 
 export default function AdicionarProduto({ route, navigation }) {
-  const { produtos, setProdutos, editar } = route.params || {};
+  const { editar } = route.params || {};
 
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState(null);
+  const [descricao, setDescricao] = useState("");
 
   useEffect(() => {
     if (editar) {
       setNome(editar.nome);
       setImagem(editar.imagem);
+      setDescricao(editar.descricao || "");
     }
   }, [editar]);
 
@@ -35,26 +38,22 @@ export default function AdicionarProduto({ route, navigation }) {
     }
   };
 
-  const salvarProduto = () => {
+  const salvarProduto = async () => {
     if (nome.trim() === "" || !imagem) {
       Alert.alert("Atenção", "Preencha o nome e escolha uma imagem.");
       return;
     }
 
-    if (editar) {
-      setProdutos(
-        produtos.map((p) =>
-          p.id === editar.id ? { ...p, nome: nome, imagem: imagem } : p
-        )
-      );
-    } else {
-      setProdutos([
-        ...produtos,
-        { id: Date.now().toString(), nome: nome, imagem: imagem },
-      ]);
+    try {
+      if (editar) {
+        await atualizarProduto(editar.id, nome, imagem, descricao);
+      } else {
+        await inserirProduto(nome, imagem, descricao);
+      }
+      navigation.goBack(); // só volta, não precisa recarregar manualmente
+    } catch (e) {
+      Alert.alert("Erro", "Não foi possível salvar o produto.");
     }
-
-    navigation.goBack();
   };
 
   return (
@@ -70,6 +69,18 @@ export default function AdicionarProduto({ route, navigation }) {
           colors: { text: "#fff", placeholder: "#fff", primary: "#fff" },
         }}
         textColor="#fff"
+      />
+      <TextInput
+        mode="outlined"
+        label="Descrição"
+        value={descricao}
+        onChangeText={setDescricao}
+        style={styles.input}
+        theme={{
+          colors: { text: "#fff", placeholder: "#fff", primary: "#fff" },
+        }}
+        textColor="#fff"
+        multiline
       />
       <TouchableOpacity style={styles.imgPicker} onPress={escolherImagem}>
         {imagem ? (

@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Produtos from "./pages/Produtos";
 import AdicionarProduto from "./pages/AdicionarProduto";
 import Contato from "./pages/Contato";
+import ViewProduto from "./pages/ViewProduto";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -69,6 +70,15 @@ export default function App() {
               headerStyle: { backgroundColor: "#001F54" },
               headerTintColor: "#fff",
               title: "Adicionar Camiseta",
+            }}
+          />
+          <Stack.Screen
+            name="ViewProduto"
+            component={ViewProduto}
+            options={{
+              headerStyle: { backgroundColor: "#001F54" },
+              headerTintColor: "#fff",
+              title: "Detalhes da Camiseta",
             }}
           />
         </Stack.Navigator>

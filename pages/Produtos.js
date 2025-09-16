@@ -1,76 +1,56 @@
-import React, { useState } from "react";
-import { View, StyleSheet, FlatList, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, FlatList, Image, Alert } from "react-native";
 import { Button, Card, IconButton, Text } from "react-native-paper";
+import { listarProdutos, excluirProduto, seedProdutosPadrao } from "../Portland/DB";
 
 export default function Produtos({ navigation }) {
-  const [produtos, setProdutos] = useState([
-    {
-      id: "1",
-      nome: "Camiseta Real Madrid 23/24",
-      imagem: "https://i.ibb.co/3y7n6kz/realmadrid.png",
-    },
-    {
-      id: "2",
-      nome: "Camiseta Flamengo 23/24",
-      imagem: "https://i.ibb.co/6w0k6nV/flamengo.png",
-    },
-    {
-      id: "3",
-      nome: "Camiseta PSG 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "4",
-      nome: "Camiseta Corinthians 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "5",
-      nome: "Camiseta PSV 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "6",
-      nome: "Camiseta Ajax 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "7",
-      nome: "Camiseta Milan 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "8",
-      nome: "Camiseta Mirassol 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "9",
-      nome: "Camiseta São Paulo 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "10",
-      nome: "Camiseta Santos 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-    {
-      id: "11",
-      nome: "Camiseta Al Hilal 23/24",
-      imagem: "..assets/camisas/psg.jpg",
-    },
-  ]);
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const itensPorPagina = 4;
   const [page, setPage] = useState(1);
+
   const totalPages = Math.ceil(produtos.length / itensPorPagina);
   const produtosPaginados = produtos.slice(
     (page - 1) * itensPorPagina,
     page * itensPorPagina
   );
 
-  const excluirProduto = (id) => {
-    setProdutos(produtos.filter((p) => p.id !== id));
+  // Seed só na primeira montagem
+  useEffect(() => {
+    async function inicializar() {
+      await seedProdutosPadrao();
+      await carregarProdutos();
+    }
+    inicializar();
+    // Listener de foco só recarrega produtos, não roda seed
+    const unsubscribe = navigation.addListener("focus", carregarProdutos);
+    return unsubscribe;
+  }, [navigation]);
+
+  async function carregarProdutos() {
+    setLoading(true);
+    const lista = await listarProdutos();
+    setProdutos(lista);
+    setLoading(false);
+  }
+
+  const handleExcluirProduto = (id) => {
+    Alert.alert(
+      "Excluir",
+      "Tem certeza que deseja excluir esta camiseta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            await excluirProduto(id);
+            carregarProdutos();
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -78,9 +58,12 @@ export default function Produtos({ navigation }) {
       <Text style={styles.title}>Camisetas de Times</Text>
       <FlatList
         data={produtosPaginados}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Card style={styles.card}>
+          <Card
+            style={styles.card}
+            onPress={() => navigation.navigate("ViewProduto", { id: item.id })}
+          >
             <Image source={{ uri: item.imagem }} style={styles.imagem} />
             <Card.Title
               title={item.nome}
@@ -93,8 +76,6 @@ export default function Produtos({ navigation }) {
                     containerColor="#001F54"
                     onPress={() =>
                       navigation.navigate("AdicionarProduto", {
-                        produtos,
-                        setProdutos,
                         editar: item,
                       })
                     }
@@ -103,14 +84,14 @@ export default function Produtos({ navigation }) {
                     icon="delete"
                     iconColor="#001F54"
                     containerColor="#fff"
-                    onPress={() => excluirProduto(item.id)}
+                    onPress={() => handleExcluirProduto(item.id)}
                   />
                 </View>
               )}
             />
           </Card>
         )}
-        contentContainerStyle={{ paddingBottom: 20}}
+        contentContainerStyle={{ paddingBottom: 20 }}
         ListFooterComponent={
           totalPages > 1 && (
             <View style={[styles.paginationContainer, { marginHorizontal: 0, paddingHorizontal: 10 }]}>
@@ -147,11 +128,15 @@ export default function Produtos({ navigation }) {
             </View>
           )
         }
+        refreshing={loading}
+        onRefresh={carregarProdutos}
       />
 
       <Button
         mode="contained"
-        onPress={() => navigation.navigate("AdicionarProduto", { produtos, setProdutos })}
+        onPress={() =>
+          navigation.navigate("AdicionarProduto", {})
+        }
         style={styles.button}
         labelStyle={{ color: "#fff", fontWeight: "bold" }}
         icon="plus"
@@ -185,8 +170,8 @@ const styles = StyleSheet.create({
   },
   imagem: {
     width: "100%",
-    height: 150,
-    resizeMode: "contain",
+    height: 220, // Mais quadrado
+    resizeMode: "cover",
     backgroundColor: "#001F54",
   },
   button: {
@@ -206,7 +191,7 @@ const styles = StyleSheet.create({
   paginationButton: {
     backgroundColor: "#001F54",
     borderRadius: 8,
-    minWidth: 90, // diminui para caber melhor
+    minWidth: 90,
     marginHorizontal: 0,
     elevation: 2,
   },

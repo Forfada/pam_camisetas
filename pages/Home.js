@@ -1,8 +1,17 @@
 import React from "react";
 import { View, StyleSheet, Text, Image, ScrollView, Pressable } from "react-native";
 import { Button, Card } from "react-native-paper";
+import { listarProdutos } from "../Portland/DB";
 
 export default function Home({ navigation }) {
+  async function abrirDestaque(navigation, nome) {
+    const produtos = await listarProdutos();
+    const produto = produtos.find((p) => p.nome === nome);
+    if (produto) {
+      navigation.navigate("ViewProduto", { id: produto.id });
+    }
+  }
+
   return (
     <ScrollView style={{ backgroundColor: "#000" }}>
       <View style={styles.header}>
@@ -23,7 +32,7 @@ export default function Home({ navigation }) {
               style={styles.cardImg}
             />
             <Pressable
-              onPress={() => navigation.navigate("Produtos", { destaque: "Real Madrid 23/24" })}
+              onPress={() => abrirDestaque(navigation, "Real Madrid 23/24")}
               android_ripple={{ color: "#001F54", borderless: false }}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.8 : 1 },
@@ -42,7 +51,7 @@ export default function Home({ navigation }) {
               style={styles.cardImg}
             />
             <Pressable
-              onPress={() => navigation.navigate("Produtos", { destaque: "PSG 23/24" })}
+              onPress={() => abrirDestaque(navigation, "PSG 23/24")}
               android_ripple={{ color: "#001F54", borderless: false }}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.8 : 1 },
@@ -61,7 +70,7 @@ export default function Home({ navigation }) {
               style={styles.cardImg}
             />
             <Pressable
-              onPress={() => navigation.navigate("Produtos", { destaque: "Flamengo 23/24" })}
+              onPress={() => abrirDestaque(navigation, "Flamengo 23/24")}
               android_ripple={{ color: "#001F54", borderless: false }}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.8 : 1 },
